@@ -13,9 +13,6 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- EmailJS -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
   <style>
     /* ============================================================
        SECTION: css-tokens  |  Juwon Design System v1.0
@@ -670,8 +667,8 @@
     #section-contact { background: var(--color-surface); }
 
     .contact-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 80px; align-items: start;
+      display: block;
+      max-width: 560px;
     }
 
     .contact-desc {
@@ -707,37 +704,6 @@
     }
 
     /* 폼 카드 */
-    .contact-form-wrap {
-      padding: 36px;
-      border-radius: var(--radius-xl);
-      border: 1.5px solid var(--color-border-purple);
-      background: var(--color-surface);
-      box-shadow: var(--shadow-card);
-    }
-    .contact-form { display: flex; flex-direction: column; gap: 18px; }
-    .form-group { display: flex; flex-direction: column; gap: 7px; }
-    .form-group label {
-      font-size: 13px; font-weight: 600; color: var(--color-text-primary);
-    }
-    /* 인풋: border-radius-md · focus 퍼플 글로우 */
-    .form-group input,
-    .form-group textarea {
-      font-family: var(--font-base); font-size: 14px;
-      padding: 12px 16px;
-      border: 1.5px solid var(--color-border);
-      border-radius: var(--radius-md);
-      background: var(--color-surface-alt);
-      color: var(--color-text-primary);
-      outline: none;
-      transition: border-color .2s, box-shadow .2s;
-      resize: none;
-    }
-    .form-group input:focus,
-    .form-group textarea:focus {
-      border-color: var(--color-purple);
-      box-shadow: 0 0 0 4px rgba(124,58,237,.10);
-    }
-    .form-group textarea { min-height: 128px; }
 
     /* ============================================================
        SECTION: css-footer
@@ -1209,17 +1175,18 @@
             </p>
             <ul class="contact-links" id="contact-links" role="list">
               <li>
-                <a href="/cdn-cgi/l/email-protection#87edf2f0e8e9a9e6e9e3a9e2f2c7e0eae6eeeba9e4e8ea" class="contact-link-item" id="contact-link-email" aria-label="이메일">
+                <a href="mailto:juwon.and.eu@gmail.com" class="contact-link-item"
+                   id="contact-link-email" aria-label="이메일 보내기">
                   <span class="contact-link-icon" aria-hidden="true">
                     <i data-lucide="mail" style="width:16px;height:16px;color:white;"></i>
                   </span>
-                  <span class="__cf_email__" data-cfemail="c1abb4b6aeafefa0afa5efa4b481a6aca0a8adefa2aeac">[email&#160;protected]</span>
+                  juwon.and.eu@gmail.com
                 </a>
               </li>
               <li>
                 <a href="https://www.linkedin.com/in/jweu" class="contact-link-item"
                    id="contact-link-linkedin"
-                   target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                   target="_blank" rel="noopener noreferrer" aria-label="LinkedIn 프로필 열기">
                   <span class="contact-link-icon" aria-hidden="true">
                     <i data-lucide="linkedin" style="width:16px;height:16px;color:white;"></i>
                   </span>
@@ -1229,39 +1196,7 @@
             </ul>
           </div>
 
-          <div class="contact-form-wrap fade-in" id="contact-form-wrap">
-            <form class="contact-form" id="contact-form" aria-label="문의 폼" novalidate>
-              <div class="form-group" id="form-group-name">
-                <label for="form-input-name">이름</label>
-                <input type="text" id="form-input-name" name="from_name"
-                       placeholder="홍길동" autocomplete="name"
-                       required aria-required="true" />
-              </div>
-              <div class="form-group" id="form-group-email">
-                <label for="form-input-email">이메일</label>
-                <input type="email" id="form-input-email" name="reply_to"
-                       placeholder="hello@example.com" autocomplete="email"
-                       required aria-required="true" />
-              </div>
-              <div class="form-group" id="form-group-message">
-                <label for="form-input-message">메시지</label>
-                <textarea id="form-input-message" name="message"
-                          placeholder="안녕하세요, ..."
-                          required aria-required="true"></textarea>
-              </div>
-              <button type="submit" class="btn-primary" id="contact-submit-btn"
-                      style="width:100%;justify-content:center;" aria-label="문의 전송">
-                <span id="btn-label">보내기</span>
-                <i data-lucide="send" id="btn-icon" style="width:15px;height:15px;"></i>
-              </button>
-              <!-- 전송 결과 메시지 -->
-              <div id="form-msg" style="display:none; margin-top:12px; padding:14px 18px;
-                   border-radius:var(--radius-md); font-size:14px; font-weight:600;
-                   text-align:center;"></div>
-            </form>
-          </div>
-
-        </div>
+</div>
       </div>
     </section>
 
@@ -1385,92 +1320,7 @@
     modalOverlay.addEventListener('click', closeModal);
     modalCloseBtn.addEventListener('click', closeModal);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-    /* ── 4. EmailJS 초기화 & 폼 전송 ── */
-    emailjs.init({ publicKey: 'UiV6FuMI5dn83sU7m' });
-
-    const contactForm = document.getElementById('contact-form');
-    const submitBtn   = document.getElementById('contact-submit-btn');
-    const btnLabel    = document.getElementById('btn-label');
-    const btnIcon     = document.getElementById('btn-icon');
-    const formMsg     = document.getElementById('form-msg');
-
-    function setFormState(state) {
-      if (state === 'loading') {
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.7';
-        btnLabel.textContent = '전송 중...';
-        btnIcon.setAttribute('data-lucide', 'loader-2');
-        lucide.createIcons();
-        formMsg.style.display = 'none';
-      } else if (state === 'success') {
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
-        btnLabel.textContent = '보내기';
-        btnIcon.setAttribute('data-lucide', 'send');
-        lucide.createIcons();
-        formMsg.style.display = 'block';
-        formMsg.style.background = 'linear-gradient(135deg,#FFE4F0 0%,#EDE9FF 100%)';
-        formMsg.style.color = '#5B21B6';
-        formMsg.style.border = '1.5px solid #DDD6FE';
-        formMsg.textContent = '✨ 메시지가 성공적으로 전달됐습니다. 빠른 시일 내에 답변 드릴게요!';
-      } else if (state === 'error') {
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
-        btnLabel.textContent = '보내기';
-        btnIcon.setAttribute('data-lucide', 'send');
-        lucide.createIcons();
-        formMsg.style.display = 'block';
-        formMsg.style.background = '#FEF2F2';
-        formMsg.style.color = '#DC2626';
-        formMsg.style.border = '1.5px solid #FECACA';
-        formMsg.textContent = '❌ 전송에 실패했습니다. 잠시 후 다시 시도하거나 이메일로 직접 연락해 주세요.';
-      }
-    }
-
-    /* 인라인 유효성 검사 */
-    function validateForm(from_name, reply_to, message) {
-      if (!from_name.trim()) return '이름을 입력해 주세요.';
-      if (!reply_to.trim())  return '이메일을 입력해 주세요.';
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reply_to)) return '올바른 이메일 형식을 입력해 주세요.';
-      if (!message.trim())   return '메시지를 입력해 주세요.';
-      return null;
-    }
-
-    contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const from_name = document.getElementById('form-input-name').value;
-      const reply_to  = document.getElementById('form-input-email').value;
-      const message   = document.getElementById('form-input-message').value;
-
-      /* 유효성 검사 */
-      const validError = validateForm(from_name, reply_to, message);
-      if (validError) {
-        formMsg.style.display = 'block';
-        formMsg.style.background = '#FEF3C7';
-        formMsg.style.color = '#92400E';
-        formMsg.style.border = '1.5px solid #FDE68A';
-        formMsg.textContent = '⚠️ ' + validError;
-        return;
-      }
-
-      setFormState('loading');
-
-      try {
-        /* sendForm: 폼 요소 직접 전달 → 템플릿 변수 name 속성으로 자동 매핑 */
-        await emailjs.sendForm(
-          'service_yxi25xv',
-          'template_hz2qvip',
-          contactForm
-        );
-        setFormState('success');
-        contactForm.reset();
-      } catch (err) {
-        console.error('EmailJS error:', err.status, err.text);
-        setFormState('error');
-      }
-    });
+  ;
   </script>
 
 </body>
